@@ -1,12 +1,13 @@
-import React from "react";
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  Pressable, 
-  StyleSheet, 
-  SafeAreaView, 
-  StatusBar 
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  StyleSheet,
+  SafeAreaView,
+  StatusBar,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
@@ -14,10 +15,59 @@ import { Ionicons, FontAwesome } from "@expo/vector-icons";
 export default function RegisterScreen() {
   const router = useRouter();
 
+  // 1. Here are the missing "memory boxes"!
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // 2. The function that talks to your backend
+  const handleRegister = async () => {
+    if (!name || !email || !password) {
+      Alert.alert("Missing Info", "Please fill in all fields to sign up.");
+      return;
+    }
+
+    try {
+      // ⚠️ CRITICAL: Replace '192.168.1.55' with YOUR computer's actual IPv4 address!
+      const response = await fetch(
+        "http://10.195.197.178:5000/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            password: password,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.status === 201) {
+        // Success! The database saved the user.
+        Alert.alert("Welcome!", "Account created successfully.");
+        // NOW we push them to the next screen!
+        router.push("/(auth)/vehicle-details");
+      } else {
+        // Database rejected it (maybe email already exists)
+        Alert.alert("Signup Failed", data.message);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+      Alert.alert(
+        "Connection Error",
+        "Could not connect to the server. Make sure your backend is running and you used your IP address.",
+      );
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-      
+
       <View style={styles.content}>
         {/* Brand Header */}
         <Text style={styles.headerTitle}>ChargeUp</Text>
@@ -31,26 +81,45 @@ export default function RegisterScreen() {
         {/* Signup Form */}
         <View style={styles.form}>
           <TextInput
+            placeholder="Full Name"
+            placeholderTextColor="#889"
+            style={styles.inputUnderline} // Added this so it matches your other boxes!
+            value={name}
+            onChangeText={setName}
+          />
+          <TextInput
             placeholder="Email address"
             placeholderTextColor="#889"
             style={styles.inputUnderline}
             keyboardType="email-address"
             autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
           />
-          
+
           <View style={styles.passwordWrapper}>
             <TextInput
               placeholder="Password"
               placeholderTextColor="#889"
               secureTextEntry
               style={[styles.inputUnderline, { flex: 1 }]}
+              value={password}
+              onChangeText={setPassword}
             />
-            <Ionicons name="eye-off-outline" size={20} color="white" style={styles.eyeIcon} />
+            <Ionicons
+              name="eye-off-outline"
+              size={20}
+              color="white"
+              style={styles.eyeIcon}
+            />
           </View>
         </View>
 
         {/* Main Action Button */}
-        <Pressable style={styles.signupBtn} onPress={() => router.push("/(auth)/vehicle-details")}>
+        <Pressable
+          style={styles.signupBtn}
+          onPress={handleRegister} // Changed this to run our server check first!
+        >
           <Text style={styles.signupBtnText}>Signup</Text>
         </Pressable>
 
@@ -78,7 +147,7 @@ export default function RegisterScreen() {
 
         {/* Legal Disclaimer */}
         <Text style={styles.legalNotice}>
-          By continuing, you are agree to our{" "}
+          By continuing, you agree to our{" "}
           <Text style={styles.legalLink}>Terms and conditions</Text> and{" "}
           <Text style={styles.legalLink}>Privacy Policy</Text>.
         </Text>
@@ -90,7 +159,7 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0D1F23", // Matches the dark UI theme
+    backgroundColor: "#0D1F23",
   },
   content: {
     flex: 1,

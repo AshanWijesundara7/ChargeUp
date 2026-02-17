@@ -22,3 +22,27 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is purring on port ${PORT}`);
 });
+
+
+
+
+
+// ... keep your other imports ...
+const authRoutes = require('./src/routes/authRoutes'); // <--- ADD THIS
+
+// ... keep your app.use(express.json()) ...
+
+// This tells the server: "Any URL starting with /api/auth goes to the authRoutes file"
+app.use('/api/auth', authRoutes); // <--- ADD THIS
+
+// ... keep your app.listen ...
+
+
+
+
+const mongoose = require('mongoose');
+
+// This tells the server to go grab the secret key from the .env file
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB Vault Connected! 🔐'))
+  .catch((err) => console.log('Vault Connection Failed:', err));
