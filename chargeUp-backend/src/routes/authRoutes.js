@@ -1,10 +1,13 @@
-// backend/src/routes/authRoutes.js
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const authController = require('../controllers/authController');
 
-// This creates the URL: http://localhost:5000/api/auth/register
-// When someone visits this URL with data, run the 'registerUser' function.
-router.post('/register', authController.registerUser);
+// Import both functions using their exact correct names!
+const { register, login } = require("../controllers/authController");
+
+// The Registration Route
+router.post("/register", register);
+
+// The Login Route
+router.post("/login", login);
 
 module.exports = router;

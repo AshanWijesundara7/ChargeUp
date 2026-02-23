@@ -2,9 +2,20 @@ import React from "react";
 import { View, Text, Pressable, StyleSheet, SafeAreaView } from "react-native";
 import { useRouter } from "expo-router";
 import { MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function RoleSelectScreen() {
   const router = useRouter();
+
+  // 💾 NEW: The function that saves the role before moving on
+  const handleRoleSelection = async (selectedRole:string) => {
+    try {
+      await AsyncStorage.setItem("userRole", selectedRole);
+      router.push("/(auth)/login");
+    } catch (error) {
+      console.error("Failed to save role.", error);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -14,8 +25,11 @@ export default function RoleSelectScreen() {
         <Text style={styles.welcomeTitle}>Welcome to ChargeUp</Text>
         <Text style={styles.subtitle}>Choose your role to get started</Text>
 
-        {/* EV Owner Option */}
-        <Pressable style={styles.roleCard} onPress={() => router.push("/(auth)/login")}>
+        {/* EV Owner Option (Client) */}
+        <Pressable 
+          style={styles.roleCard} 
+          onPress={() => handleRoleSelection("client")} // 👈 UPDATED
+        >
           <View style={styles.iconCircle}>
             <MaterialCommunityIcons name="car-electric" size={30} color="white" />
           </View>
@@ -26,8 +40,11 @@ export default function RoleSelectScreen() {
           <Entypo name="chevron-right" size={24} color="#888" />
         </Pressable>
 
-        {/* Lender Option */}
-        <Pressable style={styles.roleCard} onPress={() => router.push("/(auth)/login")}>
+        {/* Lender Option (Host) */}
+        <Pressable 
+          style={styles.roleCard} 
+          onPress={() => handleRoleSelection("host")} // 👈 UPDATED
+        >
           <View style={styles.iconCircle}>
             <MaterialCommunityIcons name="ev-station" size={30} color="white" />
           </View>

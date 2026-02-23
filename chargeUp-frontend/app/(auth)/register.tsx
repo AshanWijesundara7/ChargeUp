@@ -11,16 +11,15 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // 👈 Imported Memory
 
 export default function RegisterScreen() {
   const router = useRouter();
 
-  // 1. Here are the missing "memory boxes"!
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // 2. The function that talks to your backend
   const handleRegister = async () => {
     if (!name || !email || !password) {
       Alert.alert("Missing Info", "Please fill in all fields to sign up.");
@@ -28,9 +27,8 @@ export default function RegisterScreen() {
     }
 
     try {
-      // ⚠️ CRITICAL: Replace '192.168.1.55' with YOUR computer's actual IPv4 address!
       const response = await fetch(
-        "http://10.31.19.94:5000/api/auth/register",
+        "http://10.139.222.178:5000/api/auth/register",
         {
           method: "POST",
           headers: {
@@ -47,12 +45,18 @@ export default function RegisterScreen() {
       const data = await response.json();
 
       if (response.status === 201) {
-        // Success! The database saved the user.
         Alert.alert("Welcome!", "Account created successfully.");
-        // NOW we push them to the next screen!
-        router.push("/(auth)/vehicle-details");
+
+        // 💾 Check the "memory box" to see what role they picked
+        const role = await AsyncStorage.getItem("userRole");
+
+        // 🛣️ The Fork in the Road
+        if (role === "host") {
+          router.replace("/(host)/host-details");
+        } else {
+          router.replace("/(auth)/vehicle-details");
+        }
       } else {
-        // Database rejected it (maybe email already exists)
         Alert.alert("Signup Failed", data.message);
       }
     } catch (error) {
@@ -83,7 +87,7 @@ export default function RegisterScreen() {
           <TextInput
             placeholder="Full Name"
             placeholderTextColor="#889"
-            style={styles.inputUnderline} // Added this so it matches your other boxes!
+            style={styles.inputUnderline}
             value={name}
             onChangeText={setName}
           />
@@ -97,12 +101,13 @@ export default function RegisterScreen() {
             onChangeText={setEmail}
           />
 
+          {/* Fixed Password Wrapper */}
           <View style={styles.passwordWrapper}>
             <TextInput
               placeholder="Password"
               placeholderTextColor="#889"
               secureTextEntry
-              style={[styles.inputUnderline, { flex: 1 }]}
+              style={styles.passwordInput}
               value={password}
               onChangeText={setPassword}
             />
@@ -116,10 +121,7 @@ export default function RegisterScreen() {
         </View>
 
         {/* Main Action Button */}
-        <Pressable
-          style={styles.signupBtn}
-          onPress={handleRegister} // Changed this to run our server check first!
-        >
+        <Pressable style={styles.signupBtn} onPress={handleRegister}>
           <Text style={styles.signupBtnText}>Signup</Text>
         </Pressable>
 
@@ -198,11 +200,18 @@ const styles = StyleSheet.create({
   passwordWrapper: {
     flexDirection: "row",
     alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "white",
+    marginBottom: 25,
+  },
+  passwordInput: {
+    flex: 1,
+    color: "white",
+    paddingVertical: 10,
+    fontSize: 16,
   },
   eyeIcon: {
-    position: "absolute",
-    right: 0,
-    bottom: 35,
+    padding: 10,
   },
   signupBtn: {
     borderWidth: 1,
