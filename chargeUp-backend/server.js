@@ -2,7 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const mongoose = require('mongoose'); // 🌟 ADDED MONGOOSE
+const mongoose = require('mongoose'); 
 
 // 1. Load your secret variables
 dotenv.config();
@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
   res.send('ChargeUp Backend is Running! ⚡');
 });
 
-// 🌟 4. CONNECT TO DATABASE 🌟
+//  4. CONNECT TO DATABASE 
 // Make sure you have MONGO_URI="your_mongodb_link_here" in your .env file!
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/chargeup'; // Fallback to local DB
