@@ -15,36 +15,23 @@ import { Ionicons } from '@expo/vector-icons';
 
 /**
  * BOOKING CONFIRMATION SCREEN
- * This screen displays the success state after a user books a charger.
- * It shows the charger type, time/date, and an interactive map for navigation.
  */
 export default function BookingConfirmation() {
   const router = useRouter();
   
-  // 1. DATA EXTRACTION
-  // We grab the stationName and bookingTime passed from the charger-info screen
   const { stationName, bookingTime } = useLocalSearchParams();
 
-  // 2. COORDINATES
-  // These should ideally come from your previous screen via params, 
-  // but we'll use these as default for the map display
   const destinationCoords = {
     latitude: 6.9147,
     longitude: 79.8543,
-    latitudeDelta: 0.005, // Controls the zoom level (smaller = more zoomed in)
+    latitudeDelta: 0.005,
     longitudeDelta: 0.005,
   };
 
-  /**
-   * 3. NAVIGATION LOGIC
-   * Opens the device's native map app (Google Maps on Android, Apple Maps on iOS)
-   * to provide turn-by-turn directions to the charger.
-   */
   const handleNavigate = () => {
     const { latitude, longitude } = destinationCoords;
     const label = stationName || "EV Charging Station";
 
-    // Create platform-specific URLs for deep linking
     const url = Platform.select({
       ios: `maps:0,0?q=${label}@${latitude},${longitude}`,
       android: `geo:0,0?q=${latitude},${longitude}(${label})`
@@ -63,7 +50,6 @@ export default function BookingConfirmation() {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
-        {/* HEADER SECTION: Title and Notification Badge */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={28} color="white" />
@@ -75,7 +61,6 @@ export default function BookingConfirmation() {
           </View>
         </View>
 
-        {/* DETAILS CARD: Replicates the UI from your provided design */}
         <View style={styles.glassCard}>
           <Text style={styles.cardSectionTitle}>Charger Type</Text>
           
@@ -91,7 +76,6 @@ export default function BookingConfirmation() {
             <Text style={styles.infoText}>Type 2 (Mennekes / IEC 62196-2)</Text>
           </View>
           
-          {/* Time and Date Display */}
           <View style={styles.dateTimeRow}>
             <View style={[styles.infoRow, { flex: 1, marginRight: 10 }]}>
               <Text style={styles.infoText}>{bookingTime?.toString().split(',')[1] || "4:00 pm"}</Text>
@@ -102,7 +86,6 @@ export default function BookingConfirmation() {
           </View>
         </View>
 
-        {/* MAP SECTION: Displays the location and acts as a button for navigation */}
         <Text style={styles.directionHeader}>Direction</Text>
         <TouchableOpacity 
           style={styles.mapWrapper} 
@@ -113,7 +96,7 @@ export default function BookingConfirmation() {
             provider={PROVIDER_GOOGLE}
             style={styles.map}
             initialRegion={destinationCoords}
-            scrollEnabled={false} // Disabled to make the whole area a "button"
+            scrollEnabled={false}
             zoomEnabled={false}
             pitchEnabled={false}
             rotateEnabled={false}
@@ -125,19 +108,18 @@ export default function BookingConfirmation() {
             </Marker>
           </MapView>
           
-          {/* Visual Hint for the User */}
           <View style={styles.mapOverlay}>
             <Ionicons name="navigate-circle" size={20} color="#0B1D21" />
             <Text style={styles.overlayText}>Tap to Navigate</Text>
           </View>
         </TouchableOpacity>
 
-        {/* HOME BUTTON: Resets navigation back to the main tabs */}
         <TouchableOpacity 
-          style={styles.doneButton}
-          onPress={() => router.replace('/(tabs)')}
+          style={styles.scanButton}
+          onPress={() => router.push('/(tabs)/scan-qr')}
         >
-          <Text style={styles.doneButtonText}>Done</Text>
+          <Ionicons name="qr-code-outline" size={24} color="#0B1D21" style={{ marginRight: 8 }} />
+          <Text style={styles.scanButtonText}>Scan QR Code</Text>
         </TouchableOpacity>
 
       </ScrollView>
@@ -148,7 +130,7 @@ export default function BookingConfirmation() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0B1D21', // Deep dark background
+    backgroundColor: '#0B1D21',
   },
   scrollContent: {
     padding: 24,
@@ -257,14 +239,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 4,
   },
-  doneButton: {
+  scanButton: {
     backgroundColor: '#00D1FF',
     padding: 20,
     borderRadius: 18,
     marginTop: 40,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
-  doneButtonText: {
+  scanButtonText: {
     color: '#0B1D21',
     fontSize: 18,
     fontWeight: 'bold',
