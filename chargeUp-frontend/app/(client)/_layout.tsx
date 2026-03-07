@@ -1,11 +1,11 @@
 import { Stack } from 'expo-router';
 
-export default function RootLayout() {
+export default function ClientLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      {/* (auth) and (main) are stacks that we switch between */}
-      <Stack.Screen name="(auth)" /> 
-      <Stack.Screen name="(main)" />
+      <Stack.Screen name="index" />
+      <Stack.Screen name="role-select" />
+      <Stack.Screen name="(tabs)" />
     </Stack>
   );
 }
