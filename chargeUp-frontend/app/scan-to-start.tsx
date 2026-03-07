@@ -42,7 +42,7 @@ export default function ScanToStart() {
     Alert.alert(
       "QR Scanned Successfully",
       `Charger ID: ${data}\nDate: ${currentDate}\nTime: ${currentTime}`,
-      [{ text: "Confirm Connection", onPress: () => router.push('/(tabs)') }]
+      [{ text: "Confirm Connection", onPress: () => router.push('/(client)/(tabs)' as any) }]
     );
   };
 
