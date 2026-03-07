@@ -30,7 +30,7 @@ export default function LoginScreen() {
     try {
       // Sending data to your backend
       const response = await fetch(
-        "http://10.139.222.178:5000/api/auth/login",
+        "http://10.0.2.2:5001/api/auth/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

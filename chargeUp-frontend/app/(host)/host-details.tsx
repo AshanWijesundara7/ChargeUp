@@ -32,7 +32,7 @@ export default function HostDetailsScreen() {
 
     try {
       // 2. Send the data to your backend
-      const response = await fetch("http://10.139.222.178:5000/api/host-details", {
+      const response = await fetch("http://10.0.2.2:5001/api/host-details", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

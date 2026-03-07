@@ -8,6 +8,9 @@ import {
   SafeAreaView,
   StatusBar,
   Alert,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
@@ -28,7 +31,7 @@ export default function RegisterScreen() {
 
     try {
       const response = await fetch(
-        "http://10.139.222.178:5000/api/auth/register",
+        "http://10.0.2.2:5001/api/auth/register",
         {
           method: "POST",
           headers: {
@@ -71,8 +74,11 @@ export default function RegisterScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-
-      <View style={styles.content}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         {/* Brand Header */}
         <Text style={styles.headerTitle}>ChargeUp</Text>
 
@@ -153,7 +159,8 @@ export default function RegisterScreen() {
           <Text style={styles.legalLink}>Terms and conditions</Text> and{" "}
           <Text style={styles.legalLink}>Privacy Policy</Text>.
         </Text>
-      </View>
+      </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -164,7 +171,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#0D1F23",
   },
   content: {
-    flex: 1,
+    flexGrow: 1,
     paddingHorizontal: 30,
     paddingTop: 40,
     alignItems: "center",
