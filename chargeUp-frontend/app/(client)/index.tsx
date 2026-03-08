@@ -1,5 +1,3 @@
-import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
 import React from "react";
 import {
   Dimensions,
@@ -8,7 +6,11 @@ import {
   Text,
   TouchableOpacity,
   View,
+  SafeAreaView,
+  StatusBar
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 
 const { width, height } = Dimensions.get("window");
 
@@ -17,54 +19,54 @@ export default function WelcomeScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Background Gradient */}
-      <LinearGradient
-        colors={["#0D1F23", "#132A2F", "#0D1F23"]}
-        style={styles.background}
+      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+
+      {/* LAYER 1: Background Image shifted to the right */}
+      <Image
+        source={require("../../assets/images/car_charging.jpg")}
+        style={styles.backgroundImage}
+        resizeMode="cover"
       />
 
-      <View style={styles.content}>
-        {/* Top Header */}
-        <Text style={styles.brandText}>ChargeUp</Text>
+      {/* LAYER 2: Figma Linear Gradient Overlay */}
+      <LinearGradient
+        colors={['#101922', '#15252E', '#193038', '#1D3B42', '#0E4548']}
+        locations={[0.13, 0.35, 0.55, 0.74, 1.0]}
+        style={StyleSheet.absoluteFillObject}
+        opacity={0.85}
+      />
 
-        {/* Main Heading */}
-        <View style={styles.titleContainer}>
-          <Text style={styles.mainTitle}>
-            The Future of <Text style={styles.evText}>EV</Text>
-          </Text>
-          <Text style={styles.mainTitle}>Charging...</Text>
+      {/* LAYER 3: UI Content */}
+      <SafeAreaView style={styles.safeArea}>
+        {/* Top Logo */}
+        <View style={styles.header}>
+          <Text style={styles.brandText}>ChargeUp</Text>
         </View>
 
-        {/* Subtext */}
-        <Text style={styles.subText}>
-          Connect with charging stations instantly.{"\n"}
-          Manage your fleet{" "}
-          <Text style={styles.highlightText}>effortlessly.</Text>
-        </Text>
+        <View style={styles.content}>
+          {/* Center Titles */}
+          <View style={styles.textGroup}>
+            <Text style={styles.mainTitle}>The Future of</Text>
+            <Text style={styles.mainTitle}>εV Charging...</Text>
 
-        {/* Illustration Area */}
-        <View style={styles.imageWrapper}>
-          {/* Replace with your local image asset */}
-          <Image
-            source={{ uri: "https://placeholder.com/car-illustration" }}
-            style={styles.carImage}
-            resizeMode="contain"
-          />
+            <Text style={styles.subText}>
+              Connect with charging stations instantly.{"\n"}
+              Manage your fleet effortlessly.
+            </Text>
+          </View>
+
+          {/* Bottom Button - PATH FIXED TO LOGIN */}
+          <View style={styles.buttonWrapper}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={styles.button}
+              onPress={() => router.push("/(auth)/login")}
+            >
+              <Text style={styles.buttonText}>Get Started</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-
-        {/* Get Started Button */}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => router.push("/role-select")} // Make sure this file exists!
-        >
-          <LinearGradient
-            colors={["#1A1A1A", "#2D2D2D"]}
-            style={styles.buttonGradient}
-          >
-            <Text style={styles.buttonText}>Get Started</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     </View>
   );
 }
@@ -72,73 +74,70 @@ export default function WelcomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#101922",
   },
-  background: {
-    position: "absolute",
-    left: 0,
-    right: 0,
+  safeArea: {
+    flex: 1,
+  },
+  backgroundImage: {
+    position: 'absolute',
+    height: height,
+    width: width * 1.6,
     top: 0,
-    height: "100%",
+    left: -width * 0.5,
+  },
+  header: {
+    position: 'absolute',
+    top: 60,
+    left: 30,
+    zIndex: 10,
   },
   content: {
     flex: 1,
     paddingHorizontal: 30,
-    paddingTop: 60,
-    paddingBottom: 40,
-    justifyContent: "space-between",
-  },
-  brandText: {
-    color: "#FFF",
-    fontSize: 22,
-    fontWeight: "700",
-    letterSpacing: 1,
-  },
-  titleContainer: {
-    marginTop: 20,
-  },
-  mainTitle: {
-    color: "#FFF",
-    fontSize: 42,
-    fontWeight: "800",
-    lineHeight: 48,
-  },
-  evText: {
-    color: "#00D1FF", // Cyan blue from your image
-  },
-  subText: {
-    color: "#CCC",
-    fontSize: 16,
-    lineHeight: 24,
-    marginTop: 10,
-  },
-  highlightText: {
-    color: "#00D1FF",
-  },
-  imageWrapper: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  carImage: {
-    width: width * 0.9,
-    height: height * 0.35,
+  brandText: {
+    color: "#FFF",
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  textGroup: {
+    alignItems: "center",
+    marginBottom: 40,
+  },
+  mainTitle: {
+    color: "#FFF",
+    fontSize: 48,
+    fontWeight: "200",
+    textAlign: "center",
+    lineHeight: 55,
+  },
+  subText: {
+    color: "#FFF",
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 20,
+    lineHeight: 24,
+    fontWeight: "600",
+  },
+  buttonWrapper: {
+    marginTop: 20,
   },
   button: {
-    width: "100%",
-    height: 70,
-    borderRadius: 35,
-    borderWidth: 2,
-    borderColor: "#00D1FF", // The glowing cyan border
-    overflow: "hidden",
-  },
-  buttonGradient: {
-    flex: 1,
+    width: width * 0.75,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.5)",
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
     justifyContent: "center",
     alignItems: "center",
   },
   buttonText: {
     color: "#FFF",
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 22,
+    fontWeight: "500",
   },
 });
