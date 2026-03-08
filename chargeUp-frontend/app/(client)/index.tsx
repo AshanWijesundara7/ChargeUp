@@ -28,7 +28,7 @@ export default function WelcomeScreen() {
         resizeMode="cover"
       />
 
-      {/* LAYER 2: Figma Linear Gradient Overlay */}
+      {/* LAYER 2:Linear Gradient Overlay */}
       <LinearGradient
         colors={['#101922', '#15252E', '#193038', '#1D3B42', '#0E4548']}
         locations={[0.13, 0.35, 0.55, 0.74, 1.0]}
