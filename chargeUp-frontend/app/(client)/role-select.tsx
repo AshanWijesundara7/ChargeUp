@@ -1,88 +1,165 @@
 import React from "react";
-import { View, Text, Pressable, StyleSheet, SafeAreaView } from "react-native";
+import { View, Text, Pressable, StyleSheet, SafeAreaView, StatusBar } from "react-native";
 import { useRouter } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function RoleSelectScreen() {
   const router = useRouter();
 
-  // 💾 NEW: The function that saves the role before moving on
-  const handleRoleSelection = async (selectedRole:string) => {
-    try {
-      await AsyncStorage.setItem("userRole", selectedRole);
-      router.push("/(auth)/login");
-    } catch (error) {
-      console.error("Failed to save role.", error);
-    }
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.brandHeader}>ChargeUp</Text>
-      
-      <View style={styles.content}>
-        <Text style={styles.welcomeTitle}>Welcome to ChargeUp</Text>
-        <Text style={styles.subtitle}>Choose your role to get started</Text>
+    <View style={{ flex: 1 }}>
+      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
 
-        {/* EV Owner Option (Client) */}
-        <Pressable 
-          style={styles.roleCard} 
-          onPress={() => handleRoleSelection("client")} // 👈 UPDATED
-        >
-          <View style={styles.iconCircle}>
-            <MaterialCommunityIcons name="car-electric" size={30} color="white" />
-          </View>
-          <View style={styles.textContainer}>
-            <Text style={styles.roleTitle}>EV Owner</Text>
-            <Text style={styles.roleDesc}>Find, book and pay for charging.</Text>
-          </View>
-          <Entypo name="chevron-right" size={24} color="#888" />
-        </Pressable>
+      {/* Background Gradient using your exact Figma stops */}
+      <LinearGradient
+        colors={['#101922', '#15252E', '#193038', '#1D3B42', '#0E4548']}
+        locations={[0.13, 0.35, 0.55, 0.74, 1.0]}
+        style={StyleSheet.absoluteFill}
+      />
 
-        {/* Lender Option (Host) */}
-        <Pressable 
-          style={styles.roleCard} 
-          onPress={() => handleRoleSelection("host")} // 👈 UPDATED
-        >
-          <View style={styles.iconCircle}>
-            <MaterialCommunityIcons name="ev-station" size={30} color="white" />
-          </View>
-          <View style={styles.textContainer}>
-            <Text style={styles.roleTitle}>Lender</Text>
-            <Text style={styles.roleDesc}>Share your charger and earn.</Text>
-          </View>
-          <Entypo name="chevron-right" size={24} color="#888" />
-        </Pressable>
-      </View>
+      <SafeAreaView style={styles.safeArea}>
+        {/* Brand Logo */}
+        <View style={styles.header}>
+          <Text style={styles.brandHeader}>ChargeUp</Text>
+        </View>
 
-      <Text style={styles.legalFooter}>
-        By continuing, you are agree to our <Text style={styles.underline}>Terms and conditions</Text> and <Text style={styles.underline}>Privacy Policy</Text>.
-      </Text>
-    </SafeAreaView>
+        <View style={styles.content}>
+          <Text style={styles.welcomeTitle}>Welcome to ChargeUp</Text>
+          <Text style={styles.subtitle}>Choose your role to get started</Text>
+
+          <View style={styles.cardContainer}>
+            {/* EV Owner Option - Navigates to vehicle-details.tsx */}
+            <Pressable
+              style={({ pressed }) => [styles.roleCard, pressed && styles.pressed]}
+              onPress={() => router.push("/vehicle-details")}
+            >
+              <View style={styles.iconCircle}>
+                <MaterialCommunityIcons name="car-electric" size={28} color="white" />
+              </View>
+              <View style={styles.textContainer}>
+                <Text style={styles.roleTitle}>EV Owner</Text>
+                <Text style={styles.roleDesc}>Find, book and pay for charging.</Text>
+              </View>
+              <Entypo name="chevron-right" size={32} color="rgba(255,255,255,0.3)" />
+            </Pressable>
+
+            {/* Lender Option - Navigates to Login */}
+            <Pressable
+              style={({ pressed }) => [styles.roleCard, pressed && styles.pressed]}
+              onPress={() => router.push("/(auth)/login")}
+            >
+              <View style={styles.iconCircle}>
+                <MaterialCommunityIcons name="ev-station" size={28} color="white" />
+              </View>
+              <View style={styles.textContainer}>
+                <Text style={styles.roleTitle}>Lender</Text>
+                <Text style={styles.roleDesc}>Share your charger and earn.</Text>
+              </View>
+              <Entypo name="chevron-right" size={32} color="rgba(255,255,255,0.3)" />
+            </Pressable>
+          </View>
+        </View>
+
+        {/* Footer */}
+        <View style={styles.footer}>
+          <Text style={styles.legalFooter}>
+            By continuing, you agree to our{' '}
+            <Text style={styles.linkText}>Terms and conditions</Text> and{' '}
+            <Text style={styles.linkText}>Privacy Policy</Text>.
+          </Text>
+        </View>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0B1D21", paddingHorizontal: 25 },
-  brandHeader: { color: "white", fontSize: 24, fontWeight: "bold", marginTop: 20 },
-  content: { flex: 1, justifyContent: "center" },
-  welcomeTitle: { color: "white", fontSize: 32, fontWeight: "bold", textAlign: "center" },
-  subtitle: { color: "white", fontSize: 16, textAlign: "center", marginTop: 8, marginBottom: 40 },
+  safeArea: {
+    flex: 1,
+    paddingHorizontal: 30
+  },
+  header: {
+    marginTop: 20,
+  },
+  brandHeader: {
+    color: "white",
+    fontSize: 26,
+    fontWeight: "800",
+    letterSpacing: -0.5
+  },
+  content: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  welcomeTitle: {
+    color: "white",
+    fontSize: 34,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 10
+  },
+  subtitle: {
+    color: "#E0E0E0",
+    fontSize: 18,
+    textAlign: "center",
+    marginBottom: 60,
+    fontWeight: '400'
+  },
+  cardContainer: {
+    width: '100%',
+    gap: 20,
+  },
   roleCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#1A2E33",
-    borderRadius: 20,
-    padding: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderRadius: 24,
+    paddingVertical: 24,
+    paddingHorizontal: 20,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-    marginBottom: 15,
+    borderColor: "rgba(255, 255, 255, 0.2)",
   },
-  iconCircle: { width: 50, height: 50, borderRadius: 25, backgroundColor: "rgba(255,255,255,0.1)", justifyContent: "center", alignItems: "center" },
-  textContainer: { flex: 1, marginLeft: 15 },
-  roleTitle: { color: "white", fontSize: 18, fontWeight: "bold" },
-  roleDesc: { color: "#AAA", fontSize: 12 },
-  legalFooter: { color: "white", fontSize: 11, textAlign: "center", marginBottom: 20, opacity: 0.8 },
-  underline: { textDecorationLine: "underline" }
+  pressed: {
+    opacity: 0.7,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+  },
+  iconCircle: {
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: "rgba(255,255,255,0.12)",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  textContainer: {
+    flex: 1,
+    marginLeft: 18
+  },
+  roleTitle: {
+    color: "white",
+    fontSize: 19,
+    fontWeight: "600",
+    marginBottom: 4
+  },
+  roleDesc: {
+    color: "#D1D1D1",
+    fontSize: 14,
+    fontWeight: '400'
+  },
+  footer: {
+    paddingBottom: 20,
+  },
+  legalFooter: {
+    color: "white",
+    fontSize: 13,
+    textAlign: "center",
+    lineHeight: 20,
+    opacity: 0.9
+  },
+  linkText: {
+    color: "#81D4FA",
+    fontWeight: "bold"
+  }
 });
